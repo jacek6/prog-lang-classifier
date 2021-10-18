@@ -154,3 +154,20 @@ For every set of evaluated model, there is created `csv` file with evaluated met
  - file with suffix `.agg.csv` contains mean and stddev of metrics calucated over Crosvalidation loops
 
 ### Models evaluation
+
+Evaluated models:
+ - SVM fed by bag of words from input documents
+ - SVM fed by bag of characters from input documents reduced by alphanumeric words
+ - neural networks fed by bag of characters from input documents reduced by alphanumeric words
+
+## Conclusion
+Work was started with investigating the input data. Found chracteristic of data which are important with Crosvalidation process.
+Created basic framework for automaticly evaluating models based on Crosvalidation. Results from Crosvalidation loops are aggreageted in order to
+easier interprate data.
+
+### Future plans
+ - evaluate TF-IDF vectorizer
+ - try with different neural networks architectures
+ - train word2vec based on given documents
+ - evaluate SVM models with changed default parameters
+ - evaluate other sklearn model which are quick to implement in current framework
