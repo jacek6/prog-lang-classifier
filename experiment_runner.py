@@ -38,7 +38,7 @@ class ExperimentRunner:
         agg_rows = []
         for model_name, model_gen in models_dict.items():
             detail_metric_rows = self.train_eval_model(model_gen, n_splits=n_splits)
-            all_detail_metric_rows += detail_metric_rows
+            all_detail_metric_rows += [{'model-name': model_name, **detail_metric} for detail_metric in detail_metric_rows]
             agg_rows.append(self._create_agg_metric_rows(model_name, detail_metric_rows))
         pd.DataFrame(all_detail_metric_rows).to_csv(f'{metrics_filepath}.detail.csv')
         pd.DataFrame(agg_rows).to_csv(f'{metrics_filepath}.agg.csv')
