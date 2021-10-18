@@ -35,20 +35,27 @@ class TextClassificationModel(nn.Module):
         self.max_sentece_len = max_sentece_len
         self.embed_dim = embed_dim
         self.embedding = nn.Embedding(vocab_size, embed_dim, sparse=True)
-        self.fc = nn.Linear(self.max_sentece_len * self.embed_dim, num_class)
+        self.dropout = nn.Dropout()
+        self.layer1 = nn.Linear(self.max_sentece_len * self.embed_dim, self.max_sentece_len)
+        self.layer2 = nn.Linear(self.max_sentece_len, num_class)
+        self.layer3 = nn.Linear(num_class, num_class)
         self.init_weights()
 
     def init_weights(self):
         initrange = 0.5
         self.embedding.weight.data.uniform_(-initrange, initrange)
-        self.fc.weight.data.uniform_(-initrange, initrange)
-        self.fc.bias.data.zero_()
+        for l in [self.layer1, self.layer2, self.layer3]:
+            l.weight.data.uniform_(-initrange, initrange)
+            l.bias.data.zero_()
 
     def forward(self, text):
         embedded = self.embedding(text)
         embedded_compact = embedded.view(-1, self.max_sentece_len * self.embed_dim)
-        out = self.fc(embedded_compact)
-        return out
+        relu = nn.ReLU()
+        x = relu(self.layer1(self.dropout(embedded_compact)))
+        x = relu(self.layer2(x))
+        x = self.layer3(x)
+        return x
 
 
 class DataSet:
@@ -159,9 +166,9 @@ class Model1:
 
         dataset = NumpyDataset([train_x_no_aplhanum, train_y_encoded], max_sentence_size, vocab, tokenizer)
         self.collate_fn = dataset.collate_batch
-        dl = DataLoader(dataset, batch_size=7, shuffle=True, collate_fn=dataset.collate_batch)
+        dl = DataLoader(dataset, batch_size=70, shuffle=True, collate_fn=dataset.collate_batch)
 
-        self.model = TextClassificationModel(vocab_size=len(vocab), embed_dim=100, num_class=len(self.label_encoder.classes_),
+        self.model = TextClassificationModel(vocab_size=len(vocab), embed_dim=30, num_class=len(self.label_encoder.classes_),
                                              max_sentece_len=max_sentence_size).to(device)
 
         EPOCHS = 2
