@@ -263,7 +263,7 @@ def eval_basic_models(verbose):
         'neural model with conv2d layer': lambda: Model1(neural_model_cls=TextClassificationModel2),
         'neural model with conv2d and conv1d layers': lambda: Model1(neural_model_cls=TextClassificationModel3),
     }
-    r.train_eval_models(NEURAL_MODELS_GEN, './stats-model1-models')
+    r.train_eval_models(NEURAL_MODELS_GEN, './stats-neural-models')
 
 
 if __name__ == '__main__':
