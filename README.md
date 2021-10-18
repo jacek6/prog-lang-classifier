@@ -22,7 +22,7 @@ After look at the data:
  - `file_id` is id of file
  - `file_body` contains actual content of file, which is going to be input for classifiction
 
-Implement stratified K-Fold Crosvalidation which takes into account `proj_id`. Files with same `proj_id` are never splited into train and validatrion set.
+Implement stratified K-Fold Crosvalidation which takes into account `proj_id`. Files with same `proj_id` are never splited into train and validation set.
 
 Implement basic ML model based on SVM, just to test out if train and evaluation code works.
 
@@ -134,3 +134,23 @@ A A()
 }
 ```
 Based on such text, we may try to crate a model which takes into account non-alphanumeric characters.
+
+### Methodology of evaluation
+
+Evaluation is done with 5-Fold stratified Crosvalidation. Files with same `proj_id` are never splited into train and validation set in order to have more meaningful results.
+
+For evaluation of every model, there is done 5-Fold Crosvalidation. From each loop of Crosvalidation there is done:
+ - train model on train set from Crosvalidation
+ - evaluate metrics on validation set from Crosvalidation, used metrics:
+       - `acc` - accuracy
+       - `precision` - precision
+       - `recall` - recall
+       - `fscore` - fscore
+After evaluation of each model, for each metrics is caluluated mean of specific metric value as well as stddev.
+Mean and stddev give image how each metrics behaves in Crosvalidation and how much traing is stable.
+
+For every set of evaluated model, there is created `csv` file with evaluated metrics. For every evaluation there are 2 files:
+ - file with suffix `.detail.csv` contains metrics calucated for validation for every loop of Crosvalidation
+ - file with suffix `.agg.csv` contains mean and stddev of metrics calucated over Crosvalidation loops
+
+### Models evaluation
