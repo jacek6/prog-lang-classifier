@@ -177,7 +177,7 @@ Each of these commands generates `csv` files with results of evaluation of model
 
 ### Technical things to done
 
-In this exercise there was focus on ML part. Because of time limits some technical things need to be done:
+In this exercise there was focus on ML part. Because of time limits some technical things were postponed and need to be done in future:
  - create `requirements.txt` file in order to install all dependencies
  - more Python files to Python package
  - prepare unit tests
