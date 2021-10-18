@@ -46,3 +46,78 @@ only lowercase with 2-grams	    0.698803	0.004061
 ```
 
 So it looks with SVM models, after this experiments, model which takes lowercase 1-grams performs slightly the best.
+
+### Data preparation
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct floatList {
+    float *list;
+    int   size;
+} *FloatList;
+
+int floatcmp( const void *a, const void *b) {
+    if (*(const float *)a < *(const float *)b) return -1;
+    else return *(const float *)a > *(const float *)b;
+}
+
+float median( FloatList fl )
+{
+    qsort( fl->list, fl->size, sizeof(float), floatcmp);
+    return 0.5 * ( fl->list[fl->size/2] + fl->list[(fl->size-1)/2]);
+}
+
+int main()
+{
+    static float floats1[] = { 5.1, 2.6, 6.2, 8.8, 4.6, 4.1 };
+    static struct floatList flist1 = { floats1, sizeof(floats1)/sizeof(float) };
+
+    static float floats2[] = { 5.1, 2.6, 8.8, 4.6, 4.1 };
+    static struct floatList flist2 = { floats2, sizeof(floats2)/sizeof(float) };
+
+    printf("flist1 median is %7.2f\n", median(&flist1)); /* 4.85 */
+    printf("flist2 median is %7.2f\n", median(&flist2)); /* 4.60 */
+    return 0;
+}
+```
+
+```
+#A <A.h>
+#A <A.h>
+
+A A A {
+    A *A;
+    A   A;
+} *A;
+
+A A( A A *a, A A *b) {
+    A (*(A A *)a < *(A A *)b) A -D;
+    A A *(A A *)a > *(A A *)b;
+}
+
+A A( A A )
+{
+    A( A->A, A->A, A(A), A);
+    A D.D * ( A->A[A->A/D] + A->A[(A->A-D)/D]);
+}
+
+A A()
+{
+    A A A[] = { D.D, D.D, D.D, D.D, D.D, D.D };
+    A A A A = { A, A(A)/A(A) };
+
+    A A A[] = { D.D, D.D, D.D, D.D, D.D };
+    A A A A = { A, A(A)/A(A) };
+
+    A("A A A %D.A\n", A(&A)); /* D.A */
+    A("A A A %D.A\n", A(&A)); /* D.A */
+    A D;
+}
+```
+
+```
+include stdio stdlib typedef struct floatList  float list int size FloatList floatcmp const void if return else median fl qsort sizeof main static floats1 flist1 floats2 flist2 printf is 2f 85 60
+median length 992021 000473 496010
+```
