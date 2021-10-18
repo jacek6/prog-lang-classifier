@@ -147,8 +147,8 @@ For evaluation of every model, there is done 5-Fold Crosvalidation. From each lo
        - `precision` - precision
        - `recall` - recall
        - `fscore` - fscore
-After evaluation of each model, for each metrics is caluluated mean of specific metric value as well as stddev.
-Mean and stddev give image how each metrics behaves in Crosvalidation and how much traing is stable.
+After evaluation of each model, for each metrics is calculated mean of specific metric value as well as stddev.
+Mean and stddev give image how each metrics behaves in Crosvalidation and how much training is stable.
 
 For every set of evaluated model, there is created `csv` file with evaluated metrics. For every evaluation there are 2 files:
  - file with suffix `.detail.csv` contains metrics calucated for validation for every loop of Crosvalidation
@@ -189,7 +189,7 @@ Work was started with investigating the input data. Found characteristic of data
 Created basic framework for automatically evaluating models based on Crosvalidation. Results from Crosvalidation loops are aggregated in order to
 easier interpret data.
 
-Evaluated basic ML model in order to have a baseline. All more advanced ML model are going to be compared with base line.
+Evaluated basic ML model in order to have a baseline. All more advanced ML model are going to be compared with baseline.
 
 Evaluated few neural network models. All of them do not perform better than basic ML models which are baseline.
 Results of evaluation are in `csv` files which are pushed to repository.
@@ -198,7 +198,7 @@ Over evaluated models, the best was SVM model fed with words extracted from file
 On validation set, achieved accuracy mean is about `0.70` with precision mean about`0.85` and recall mean about `0.68`.
 F-score mean is about `0.73`.
 
-### Future plans
+## Future plans
  - evaluate TF-IDF vectorizer
  - try with different neural networks architectures
  - train word2vec based on given documents
