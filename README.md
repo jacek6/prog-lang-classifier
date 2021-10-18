@@ -171,6 +171,8 @@ of ML models it need to be run:
  $ python pytorch_neural_models.py
 ```
 
+`csv` files with results of evaluation were pushed to root of repository.
+
 Each of these commands generates `csv` files with results of evaluation of model. 
 
 ### Technical things to done
