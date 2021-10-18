@@ -46,7 +46,7 @@ only lowercase	                    0.703528           0.004569
 only lowercase with 2-grams	        0.698803	       0.004061
 ```
 
-So it looks with SVM models, after this experiments, model which takes lowercase 1-grams performs slightly the best. (the middle row)
+So it looks with SVM models, after this experiments, model which takes lowercase 1-grams performs slightly the best (the middle row).
 
 ### Data preparation
 Text of file bodies need to be converted to vector for many ML methods.
