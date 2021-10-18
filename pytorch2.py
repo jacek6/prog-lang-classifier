@@ -1,5 +1,6 @@
 import re
 
+import time
 import numpy as np
 import torch
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -9,10 +10,6 @@ from scipy.sparse import hstack
 from torch.utils.data import DataLoader, TensorDataset, Dataset
 
 from experiment_runner import ExperimentRunner
-
-BASIC_MODELS_GEN = {
-    'basic': lambda: Model1(),
-}
 
 words_pattern = re.compile(r"(\b\w\w+\b)")
 digit_pattern = re.compile(r"(\d+)")
@@ -57,6 +54,7 @@ class TextClassificationModel(nn.Module):
         x = self.layer3(x)
         return x
 
+
 class TextClassificationModel2(nn.Module):
 
     def __init__(self, vocab_size, embed_dim, num_class, max_sentece_len):
@@ -89,10 +87,48 @@ class TextClassificationModel2(nn.Module):
         return x.view(batch_size, -1).size(1)
 
 
-class DataSet:
+class TextClassificationModel3(nn.Module):
 
-    def __init__(self):
-        pass
+    def __init__(self, vocab_size, embed_dim, num_class, max_sentece_len):
+        super(TextClassificationModel3, self).__init__()
+        self.max_sentece_len = max_sentece_len
+        self.embed_dim = embed_dim
+        self.embedding = nn.Embedding(vocab_size, embed_dim, sparse=True)
+        self.dropout = nn.Dropout()
+        self.conv1 = nn.Conv2d(1, 2, (13, 5), stride=5)
+        self.conv2 = nn.Conv1d(2, 1, 21, stride=11)
+        self.fc = nn.Linear(self._calc_fc_input_size(), num_class)
+        self.relu = nn.ReLU()
+        self.init_weights()
+
+    def init_weights(self):
+        initrange = 0.5
+        self.embedding.weight.data.uniform_(-initrange, initrange)
+
+    def forward(self, text):
+        embedded = self.embedding(text)
+        embedded2 = embedded.unsqueeze(1)
+        x = self.conv1(embedded2)
+        x = self.relu(x)
+        x = x.view(len(text), 2, -1)
+        x = self.conv2(x)
+        x = self.relu(x)
+        x = self.fc(x.view(text.size(0), -1))
+        return x
+
+    def _calc_fc_input_size(self):
+        batch_size = 3
+        embedded2 = torch.zeros(size=(batch_size, 1, self.max_sentece_len, self.embed_dim))
+        x = self.conv1(embedded2)
+        x = x.view(batch_size, 2, -1)
+        x = self.conv2(x)
+        return x.view(batch_size, -1).size(1)
+
+
+# class DataSet:
+# 
+#     def __init__(self):
+#         pass
 
 
 class NumpyDataset(Dataset):
@@ -121,12 +157,9 @@ class NumpyDataset(Dataset):
                 text_tensor[idx, :self.max_sentence_size] = processed_text[:self.max_sentence_size]
             else:
                 repeats = self.max_sentence_size // len(processed_text)
-                text_tensor[idx, :repeats*len(processed_text)] = processed_text.repeat(repeats)
-                text_tensor[idx, repeats*len(processed_text):] = processed_text[:self.max_sentence_size-repeats*len(processed_text)]
+                text_tensor[idx, :repeats * len(processed_text)] = processed_text.repeat(repeats)
+                text_tensor[idx, repeats * len(processed_text):] = processed_text[:self.max_sentence_size - repeats * len(processed_text)]
         return text_tensor, labels.long()
-
-
-import time
 
 
 def train(model, optimizer, criterion, dataloader, device):
@@ -170,9 +203,10 @@ def evaluate(model, criterion, dataloader, device):
 
 class Model1:
 
-    def __init__(self):
+    def __init__(self, neural_model_cls):
         self.vectorizer_no_aplhanum = CountVectorizer(lowercase=False, token_pattern=r"[^\s]")
-        self.model = SVC()
+        self.model = None
+        self.neural_model_cls = neural_model_cls
 
     def fit(self, train_x, train_y):
         tokenizer = self.vectorizer_no_aplhanum.build_tokenizer()
@@ -201,11 +235,11 @@ class Model1:
         self.collate_fn = dataset.collate_batch
         dl = DataLoader(dataset, batch_size=70, shuffle=True, collate_fn=dataset.collate_batch)
 
-        self.model = TextClassificationModel2(vocab_size=len(vocab), embed_dim=30, num_class=len(self.label_encoder.classes_),
-                                             max_sentece_len=max_sentence_size).to(device)
+        self.model = self.neural_model_cls(vocab_size=len(vocab), embed_dim=30, num_class=len(self.label_encoder.classes_),
+                                           max_sentece_len=max_sentence_size).to(device)
 
         EPOCHS = 10
-        optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001)
+        optimizer = torch.optim.SGD(self.model.parameters(), lr=0.003)
         criterion = torch.nn.CrossEntropyLoss()
         for epoch in range(1, EPOCHS + 1):
             epoch_start_time = time.time()
@@ -224,7 +258,12 @@ class Model1:
 
 def eval_basic_models(verbose):
     r = ExperimentRunner('./data.csv', verbose=verbose)
-    r.train_eval_models(BASIC_MODELS_GEN, './stats-model1-models')
+    NEURAL_MODELS_GEN = {
+        'neural model with 3 layers': lambda: Model1(neural_model_cls=TextClassificationModel),
+        'neural model with conv2d layer': lambda: Model1(neural_model_cls=TextClassificationModel2),
+        'neural model with conv2d and conv1d layers': lambda: Model1(neural_model_cls=TextClassificationModel3),
+    }
+    r.train_eval_models(NEURAL_MODELS_GEN, './stats-model1-models')
 
 
 if __name__ == '__main__':
