@@ -192,7 +192,7 @@ easier interpret data.
 Evaluated basic ML model in order to have a baseline. All more advanced ML model are going to be compared with base line.
 
 Evaluated few neural network models. All of them do not perform better than basic ML models which are baseline.
-Result are in `csv` files which are pushed to repository.
+Results of evaluation are in `csv` files which are pushed to repository.
 
 Over evaluated models, the best was SVM model fed with words extracted from file body.
 On validation set, achieved accuracy mean is about `0.70` with precision mean about`0.85` and recall mean about `0.68`.
