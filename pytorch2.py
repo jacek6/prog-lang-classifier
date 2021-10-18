@@ -57,6 +57,37 @@ class TextClassificationModel(nn.Module):
         x = self.layer3(x)
         return x
 
+class TextClassificationModel2(nn.Module):
+
+    def __init__(self, vocab_size, embed_dim, num_class, max_sentece_len):
+        super(TextClassificationModel2, self).__init__()
+        self.max_sentece_len = max_sentece_len
+        self.embed_dim = embed_dim
+        self.embedding = nn.Embedding(vocab_size, embed_dim, sparse=True)
+        self.dropout = nn.Dropout()
+        self.conv1 = nn.Conv2d(1, 2, (13, 5), stride=5)
+        self.fc = nn.Linear(self._calc_fc_input_size(), num_class)
+        self.relu = nn.ReLU()
+        self.init_weights()
+
+    def init_weights(self):
+        initrange = 0.5
+        self.embedding.weight.data.uniform_(-initrange, initrange)
+
+    def forward(self, text):
+        embedded = self.embedding(text)
+        embedded2 = embedded.unsqueeze(1)
+        x = self.conv1(embedded2)
+        x = self.relu(x)
+        x = self.fc(x.view(text.size(0), -1))
+        return x
+
+    def _calc_fc_input_size(self):
+        batch_size = 3
+        embedded2 = torch.zeros(size=(batch_size, 1, self.max_sentece_len, self.embed_dim))
+        x = self.conv1(embedded2)
+        return x.view(batch_size, -1).size(1)
+
 
 class DataSet:
 
@@ -89,7 +120,9 @@ class NumpyDataset(Dataset):
             if len(processed_text) >= self.max_sentence_size:
                 text_tensor[idx, :self.max_sentence_size] = processed_text[:self.max_sentence_size]
             else:
-                text_tensor[idx, :len(processed_text)] = processed_text
+                repeats = self.max_sentence_size // len(processed_text)
+                text_tensor[idx, :repeats*len(processed_text)] = processed_text.repeat(repeats)
+                text_tensor[idx, repeats*len(processed_text):] = processed_text[:self.max_sentence_size-repeats*len(processed_text)]
         return text_tensor, labels.long()
 
 
@@ -168,10 +201,10 @@ class Model1:
         self.collate_fn = dataset.collate_batch
         dl = DataLoader(dataset, batch_size=70, shuffle=True, collate_fn=dataset.collate_batch)
 
-        self.model = TextClassificationModel(vocab_size=len(vocab), embed_dim=30, num_class=len(self.label_encoder.classes_),
+        self.model = TextClassificationModel2(vocab_size=len(vocab), embed_dim=30, num_class=len(self.label_encoder.classes_),
                                              max_sentece_len=max_sentence_size).to(device)
 
-        EPOCHS = 2
+        EPOCHS = 10
         optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001)
         criterion = torch.nn.CrossEntropyLoss()
         for epoch in range(1, EPOCHS + 1):
