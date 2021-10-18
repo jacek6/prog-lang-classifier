@@ -48,7 +48,9 @@ only lowercase with 2-grams	    0.698803	0.004061
 So it looks with SVM models, after this experiments, model which takes lowercase 1-grams performs slightly the best.
 
 ### Data preparation
+Text of file bodies need to be converted to vector for many ML methods.
 
+Let's look by example how text is processed. Below we have example content of some file body from given data.
 ```
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,6 +85,21 @@ int main()
 }
 ```
 
+For that text, we may apply some simply method for text vectorizing, for example `CountVectorizer` from `sklearn.feature_extraction.text`.
+
+With such simple method, if we vectorize and 'un-vectorize' we get text like:
+```
+include stdio stdlib typedef struct floatList  float list int size FloatList floatcmp const void if return else median fl qsort sizeof main static floats1 flist1 floats2 flist2 printf is 2f 85 60
+median length 992021 000473 496010
+```
+order of words here does not matter.
+
+Looking at original content, we see there is many non-alphanumeric characters which for human are helpful to determine language of a file.
+We may try to create model which focus on that non-alphanumeric characters.
+
+For that, we may 'reduce' original content to remove words and digits in order to create a text which more exposes non-alphanumeric characters.
+
+Below is example of such reduction, applied to mentioned example content of file body.
 ```
 #A <A.h>
 #A <A.h>
@@ -116,8 +133,4 @@ A A()
     A D;
 }
 ```
-
-```
-include stdio stdlib typedef struct floatList  float list int size FloatList floatcmp const void if return else median fl qsort sizeof main static floats1 flist1 floats2 flist2 printf is 2f 85 60
-median length 992021 000473 496010
-```
+Based on such text, we may try to crate a model which takes into account non-alphanumeric characters.
