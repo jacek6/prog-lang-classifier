@@ -160,10 +160,37 @@ Evaluated models:
  - SVM fed by bag of characters from input documents reduced by alphanumeric words
  - neural networks fed by bag of characters from input documents reduced by alphanumeric words
 
+#### Run of models evaluation
+
+Evaluation may be done, when input data file `data.csv` in located in repository root. Then to run evaluation of specific groups
+of ML models it need to be run:
+```
+ $ python basic_models.py
+ $ python basic_models_non_alphanumeric.py
+ $ python pytorch_neural_models.py
+```
+
+Each of these commands generates `csv` files with results of evaluation of model. 
+
+### Technical things to done
+
+In this exercise there was focus on ML part. Because of time limits some technical things need to be done:
+ - create `requirements.txt` file in order to install all dependencies
+ - more Python files to Python package
+ - prepare unit tests
+ - create `setup.py` file
+ - create docstrings
+
 ## Conclusion
-Work was started with investigating the input data. Found chracteristic of data which are important with Crosvalidation process.
-Created basic framework for automaticly evaluating models based on Crosvalidation. Results from Crosvalidation loops are aggreageted in order to
-easier interprate data.
+Work was started with investigating the input data. Found characteristic of data which are important with Crosvalidation process.
+Created basic framework for automatically evaluating models based on Crosvalidation. Results from Crosvalidation loops are aggregated in order to
+easier interpret data.
+
+Evaluated basic ML model in order to have a baseline. All more advanced ML model are going to be compared with base line.
+
+Evaluated few neural network models. All of them do not perform better than basic ML models which are baseline.
+
+Over evaluated models, the best was SVM model fed with words extracted from file body.
 
 ### Future plans
  - evaluate TF-IDF vectorizer
