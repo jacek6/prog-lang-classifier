@@ -40,10 +40,10 @@ We get evaluation of basic ML models in files: `stats-basic-models.agg.csv` and 
 
 `stats-basic-models.agg.csv` contains mean and stddev and slice of it looks:
 ```
-model-name	                        acc-mean	acc-stddev
-basic	                            0.685148	0.005167
-only lowercase	                     0.703528	0.004569
-only lowercase with 2-grams	        0.698803	0.004061
+model-name	                        acc-mean	       acc-stddev
+basic	                            0.685148	       0.005167
+only lowercase	                    0.703528           0.004569
+only lowercase with 2-grams	        0.698803	       0.004061
 ```
 
 So it looks with SVM models, after this experiments, model which takes lowercase 1-grams performs slightly the best. (the middle row)
